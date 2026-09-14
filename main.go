@@ -3,55 +3,85 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
-	"strconv"
-	"strings"
+	"regexp"
 )
 
-// TODO (scalar-values): implement per the lesson description.
-func ParseToken(line string) string {
-	switch line {
-	case "true":
-		return "True"
-	case "false":
-		return "False"
-	case "null":
-		return "None"
-	}
-	if b, err := strconv.ParseInt(line, 10, 64); err == nil {
-		if b == -0 {
-			return "0"
-		}
-		return line
-	} else if f, err := strconv.ParseFloat(line, 64); err == nil {
-
-		if !math.IsNaN(f) && !math.IsInf(f, 0) {
-			float_str := strconv.FormatFloat(f, 'f', -1, 64)
-			if !strings.Contains(float_str, ".") {
-				return float_str + ".0"
-			}
-			return float_str
-		}
-	} else if line[0] == '"' && line[len(line)-1] == '"' {
-		return "'" + line[1:len(line)-1] + "'"
-	}
-
-	return fmt.Sprintf("ERR not a JSON literal: '%s'", line)
-
-}
+// TODO (number-grammar): implement per the lesson description.
 
 func main() {
 	sc := bufio.NewScanner(os.Stdin)
 	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
+
+	pattern := regexp.MustCompile(`\A-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\z`)
+
 	for sc.Scan() {
 		line := sc.Text()
 		if line == "" {
 			continue
 		}
-		fmt.Println(ParseToken(line))
+		if pattern.MatchString(line) {
+			fmt.Println("OK")
+		} else {
+			fmt.Println("ERR invalid number")
+		}
 	}
 }
+
+// package main
+
+// import (
+// 	"bufio"
+// 	"fmt"
+// 	"math"
+// 	"os"
+// 	"strconv"
+// 	"strings"
+// )
+
+// // TODO (scalar-values): implement per the lesson description.
+// func ParseToken(line string) string {
+// 	switch line {
+// 	case "true":
+// 		return "True"
+// 	case "false":
+// 		return "False"
+// 	case "null":
+// 		return "None"
+// 	}
+// 	if b, err := strconv.ParseInt(line, 10, 64); err == nil {
+// 		if b == -0 {
+// 			return "0"
+// 		}
+// 		return line
+// 	} else if f, err := strconv.ParseFloat(line, 64); err == nil {
+
+// 		if !math.IsNaN(f) && !math.IsInf(f, 0) {
+// 			float_str := strconv.FormatFloat(f, 'f', -1, 64)
+// 			if !strings.Contains(float_str, ".") {
+// 				return float_str + ".0"
+// 			}
+// 			return float_str
+// 		}
+// 	} else if line[0] == '"' && line[len(line)-1] == '"' {
+// 		return "'" + line[1:len(line)-1] + "'"
+// 	}
+
+// 	return fmt.Sprintf("ERR not a JSON literal: '%s'", line)
+
+// }
+
+// func main() {
+// 	sc := bufio.NewScanner(os.Stdin)
+// 	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
+// 	for sc.Scan() {
+// 		line := sc.Text()
+// 		if line == "" {
+// 			continue
+// 		}
+// 		fmt.Println(ParseToken(line))
+// 	}
+// }
 
 // package main
 
