@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -18,14 +19,20 @@ func ParseToken(line string) string {
 	case "null":
 		return "None"
 	}
-	if _, err := strconv.ParseInt(line, 10, 64); err == nil {
+	if b, err := strconv.ParseInt(line, 10, 64); err == nil {
+		if b == -0 {
+			return "0"
+		}
 		return line
 	} else if f, err := strconv.ParseFloat(line, 64); err == nil {
-		float_str := strconv.FormatFloat(f, 'f', -1, 64)
-		if !strings.Contains(float_str, ".") {
-			return float_str + ".0"
+
+		if !math.IsNaN(f) && !math.IsInf(f, 0) {
+			float_str := strconv.FormatFloat(f, 'f', -1, 64)
+			if !strings.Contains(float_str, ".") {
+				return float_str + ".0"
+			}
+			return float_str
 		}
-		return float_str
 	} else if line[0] == '"' && line[len(line)-1] == '"' {
 		return "'" + line[1:len(line)-1] + "'"
 	}
