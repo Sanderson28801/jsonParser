@@ -25,6 +25,7 @@ func main() {
 		't':  '\u0009',
 	}
 	for sc.Scan() {
+		terminated := false
 		decoded := ""
 		err := false
 		line := sc.Text()
@@ -33,11 +34,14 @@ func main() {
 		}
 
 		for index := 0; index < len(line); {
+			if index == len(line)-1 && line[index] == '"' {
+				terminated = true
+			}
 			if line[index] == '\\' {
 				if index+1 >= len(line) {
 					fmt.Println("ERR")
 					err = true
-					break
+					return
 				}
 				next_val := line[index+1]
 				val, exists := escape_map[rune(next_val)]
@@ -69,7 +73,7 @@ func main() {
 				} else {
 					fmt.Println("ERR")
 					err = true
-					break
+					return
 				}
 				index++
 				// } else if next_val == 'u'{
@@ -81,6 +85,11 @@ func main() {
 			index++
 
 		}
+		if !terminated {
+			fmt.Println("ERR")
+			return
+		}
+
 		if !err {
 			fmt.Println(decoded[1 : len(decoded)-1])
 		}
