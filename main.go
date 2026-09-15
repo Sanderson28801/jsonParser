@@ -102,7 +102,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sanderson28801/jsonParser/utilities"
+	"shipthatcode-build-json-parser-go/utilities"
 )
 
 func main() {

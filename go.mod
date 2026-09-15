@@ -1,3 +1,3 @@
-module github.com/sanderson28801/jsonParser
+module shipthatcode-build-json-parser-go
 
 go 1.22.2
