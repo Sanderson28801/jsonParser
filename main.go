@@ -101,8 +101,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-
-	"shipthatcode-build-json-parser-go/utilities"
 )
 
 func main() {
@@ -113,15 +111,15 @@ func main() {
 		if line == "" {
 			continue
 		}
-		tokens, err := utilities.Tokenize(line)
+		tokens, err := Tokenize(line)
 
 		if err != nil {
 			fmt.Println("ERR")
 		}
-		parser := utilities.Parser{
+		parser := Parser{
 			Tokens: tokens,
 			Cursor: 0}
-		val, err := utilities.ParseToken(&parser)
+		val, err := ParseToken(&parser)
 		if err != nil {
 			fmt.Println(err)
 		}
