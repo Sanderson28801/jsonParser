@@ -100,8 +100,9 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"jsonParser/utilities"
 	"os"
+
+	"github.com/sanderson28801/jsonParser/utilities"
 )
 
 func main() {
