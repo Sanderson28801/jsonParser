@@ -254,6 +254,12 @@ func ParseToken(parser *Parser) (string, error) {
 	// 		return float_str
 	// 	}
 	// } else
+	if b, err := strconv.ParseInt(parser.peek().Value, 10, 64); err == nil {
+		if b == -0 {
+			return "0", nil
+		}
+		return parser.peek().Value, nil
+	}
 	if parser.peek().Value[0] == '"' && parser.peek().Value[len(parser.peek().Value)-1] == '"' {
 		return "'" + parser.peek().Value[1:len(parser.peek().Value)-1] + "'", nil
 	} else {
@@ -261,6 +267,9 @@ func ParseToken(parser *Parser) (string, error) {
 		if f, err := strconv.ParseFloat(parser.peek().Value, 64); pattern.MatchString(parser.peek().Value) && err == nil {
 
 			float_str := strconv.FormatFloat(f, 'f', -1, 64)
+			if !strings.Contains(float_str, ".") {
+				return float_str + ".0", nil
+			}
 
 			return float_str, nil
 		}
