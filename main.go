@@ -100,7 +100,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"json-parser/utilities"
+	"jsonParser/utilities"
 	"os"
 )
 
