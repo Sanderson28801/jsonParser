@@ -1,33 +1,3 @@
-package main
-
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"regexp"
-)
-
-// TODO (number-grammar): implement per the lesson description.
-
-func main() {
-	sc := bufio.NewScanner(os.Stdin)
-	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
-
-	pattern := regexp.MustCompile(`\A-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\z`)
-
-	for sc.Scan() {
-		line := sc.Text()
-		if line == "" {
-			continue
-		}
-		if pattern.MatchString(line) {
-			fmt.Println("OK")
-		} else {
-			fmt.Println("ERR invalid number")
-		}
-	}
-}
-
 // package main
 
 // import (
@@ -37,39 +7,10 @@ func main() {
 // 	"os"
 // 	"strconv"
 // 	"strings"
+// 	"regexp"
 // )
 
-// // TODO (scalar-values): implement per the lesson description.
-// func ParseToken(line string) string {
-// 	switch line {
-// 	case "true":
-// 		return "True"
-// 	case "false":
-// 		return "False"
-// 	case "null":
-// 		return "None"
-// 	}
-// 	if b, err := strconv.ParseInt(line, 10, 64); err == nil {
-// 		if b == -0 {
-// 			return "0"
-// 		}
-// 		return line
-// 	} else if f, err := strconv.ParseFloat(line, 64); err == nil {
-
-// 		if !math.IsNaN(f) && !math.IsInf(f, 0) {
-// 			float_str := strconv.FormatFloat(f, 'f', -1, 64)
-// 			if !strings.Contains(float_str, ".") {
-// 				return float_str + ".0"
-// 			}
-// 			return float_str
-// 		}
-// 	} else if line[0] == '"' && line[len(line)-1] == '"' {
-// 		return "'" + line[1:len(line)-1] + "'"
-// 	}
-
-// 	return fmt.Sprintf("ERR not a JSON literal: '%s'", line)
-
-// }
+// // TODO (parse-array): implement per the lesson description.
 
 // func main() {
 // 	sc := bufio.NewScanner(os.Stdin)
@@ -79,9 +20,120 @@ func main() {
 // 		if line == "" {
 // 			continue
 // 		}
-// 		fmt.Println(ParseToken(line))
+// 		if line[0] == '[' {
+// 			fmt.Println(ParseArray(line))
+// 		}
 // 	}
 // }
+
+// func ParseArray(line string) []string {
+
+// 	h := []string{"hi"}
+// 	return h
+// }
+
+// func ParseValue(line string) string {
+// 	switch line {
+// 	case "true":
+// 		return "True"
+// 	case "false":
+// 		return "False"
+// 	case "null":
+// 		return "None"
+// 	}
+// 	// if b, err := strconv.ParseInt(line, 10, 64); err == nil {
+// 	// 	if b == -0 {
+// 	// 		return "0"
+// 	// 	}
+// 	// 	return line
+// 	// } else if f, err := strconv.ParseFloat(line, 64); err == nil {
+
+// 	// 	if !math.IsNaN(f) && !math.IsInf(f, 0) {
+// 	// 		float_str := strconv.FormatFloat(f, 'f', -1, 64)
+// 	// 		if !strings.Contains(float_str, ".") {
+// 	// 			return float_str + ".0"
+// 	// 		}
+// 	// 		return float_str
+// 	// 	}
+// 	if line[0] == '"' && line[len(line)-1] == '"' {
+// 		return "'" + line[1:len(line)-1] + "'"
+// 	} else {
+// 		pattern := regexp.MustCompile(`\A-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\z`)
+// 	}
+
+// 	return fmt.Sprintf("ERR not a JSON literal: '%s'", line)
+
+// }
+
+// package main
+
+// import (
+// 	"bufio"
+// 	"fmt"
+// 	"os"
+// 	"regexp"
+// )
+
+// // TODO (number-grammar): implement per the lesson description.
+
+// func main() {
+// 	sc := bufio.NewScanner(os.Stdin)
+// 	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
+
+// 	pattern := regexp.MustCompile(`\A-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\z`)
+
+// 	for sc.Scan() {
+// 		line := sc.Text()
+// 		if line == "" {
+// 			continue
+// 		}
+// 		if pattern.MatchString(line) {
+// 			fmt.Println("OK")
+// 		} else {
+// 			fmt.Println("ERR invalid number")
+// 		}
+// 	}
+// }
+
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"json-parser/utilities"
+	"os"
+)
+
+func main() {
+	sc := bufio.NewScanner(os.Stdin)
+	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
+	for sc.Scan() {
+		line := sc.Text()
+		if line == "" {
+			continue
+		}
+		tokens, err := utilities.Tokenize(line)
+
+		if err != nil {
+			fmt.Println("ERR")
+		}
+		parser := utilities.Parser{
+			Tokens: tokens,
+			Cursor: 0}
+		val, err := utilities.ParseToken(&parser)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(val)
+		// if parser.peek().Kind == "PUNCT" && tokens[0].Value == "[" {
+		// 	parsed_line := utilities.ParseArray(tokens[1:])
+
+		// 	fmt.Println("[" + strings.Join(parsed_line, ", ") + "]")
+		// }
+
+		// fmt.Println(ParseToken(line))
+	}
+}
 
 // package main
 
@@ -185,77 +237,6 @@ func main() {
 // 		// }
 // 		// fmt.Println(decoded)
 // 	}
-// }
-
-// package main
-
-// import (
-// 	"bufio"
-// 	"fmt"
-// 	"os"
-// 	"strconv"
-// 	"strings"
-// )
-
-// type Token struct{ Kind, Value string }
-
-// func tokenize(src string) ([]Token, error) {
-// 	var tokens []Token
-// 	i := 0
-// 	for i < len(src) {
-// 		c := src[i]
-// 		switch {
-// 		case c == ' ' || c == '\t' || c == '\n' || c == '\r':
-// 			i++
-// 		case strings.ContainsRune("{}[],:", rune(c)):
-// 			tokens = append(tokens, Token{"PUNCT", string(c)})
-// 			i++
-// 		case c == '"':
-// 			j := i + 1
-
-// 			for j < len(src) && src[j] != '"' {
-// 				j++
-// 			}
-// 			decoded, err := strconv.Unquote(src[i : j+1])
-
-// 			if err != nil {
-// 				fmt.Println("Unexpected Token")
-// 			}
-// 			tokens = append(tokens, Token{"STRING", decoded})
-// 			i = j + 1
-// 		case c == '-' || (c >= '0' && c <= '9'):
-// 			j := i
-// 			if c == '-' {
-// 				j++
-// 			}
-// 			for j < len(src) && src[j] >= '0' && src[j] <= '9' {
-// 				j++
-// 			}
-
-// 			if j < len(src) && src[j] == '.' {
-// 				j++
-// 				for j < len(src) && ((src[j] >= '0' && src[j] <= '9') || src[j] == 'e') {
-// 					j++
-// 				}
-// 			}
-
-// 			tokens = append(tokens, Token{"NUMBER", src[i:j]})
-// 			i = j
-// 		case strings.HasPrefix(src[i:], "true"):
-// 			tokens = append(tokens, Token{"TRUE", "true"})
-// 			i += 4
-// 		case strings.HasPrefix(src[i:], "false"):
-// 			tokens = append(tokens, Token{"FALSE", "false"})
-// 			i += 5
-// 		case strings.HasPrefix(src[i:], "null"):
-// 			tokens = append(tokens, Token{"NULL", "null"})
-// 			i += 4
-// 		default:
-// 			return nil, fmt.Errorf("unexpected character %q at position %d", c, i)
-// 		}
-// 	}
-// 	tokens = append(tokens, Token{"EOF", ""})
-// 	return tokens, nil
 // }
 
 // func main() {
